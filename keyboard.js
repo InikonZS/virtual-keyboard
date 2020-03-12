@@ -1,8 +1,13 @@
 var mainWindow=document.querySelector('#wnd');
 document.addEventListener('keydown',keyOnDown);
 document.addEventListener('keyup',keyOnUp);
-var el=document.createElement('div');
+var el=document.createElement('textarea');
 el.className='output';
+//el.readOnly=true;
+//el.on
+el.onkeydown=()=>false;
+//el.onblur=()=>el.focus();
+//el.id="ta";
 //el.className='';
 mainWindow.appendChild(el);
 
@@ -34,6 +39,7 @@ function makeButton(parentNode, st, ch){
 	//elem.addEventListener('mouseup',buttonOnUp);
 	elem.addEventListener('mouseleave',buttonOnLeave);
 	elem.id=st;
+	//elem.onfocus=()=>false;
 	elem.onselectstart=()=>false;
 	elem.innerText=ch;
 	elem.dt=ch;
@@ -53,7 +59,9 @@ function keyOnDown(event){
 	console.log(event);
 	
 	var targ=document.querySelector('#'+event.code);
-	if (targ.dt&&targ.dt.length==1) { el.innerText+=''+targ.dt; } else {keyDoDown(event.code)}
+	if (targ.dt&&targ.dt.length==1) { //el.value+=''+targ.dt; 
+	insertString(el,targ.dt);
+} else {keyDoDown(event.code)}
 	if(targ) {targ.className='key-button key-button-active';}
 }
 function keyOnUp(event){
@@ -65,15 +73,16 @@ function keyOnUp(event){
 }
 
 function buttonOnDown(event){
-
 	//console.log(event.target);
 	//el.innerText+=event.target.dt;
-	if (event.target.dt.length==1) { el.innerText+=''+event.target.dt; }
+	if (event.target.dt.length==1) { //el.value+=''+event.target.dt; 
+	insertString(el,event.target.dt);} else {keyDoDown(event.target.id);}
 	event.target.className='key-button key-button-active';
 	//return false;
 }
 function buttonOnUp(event){
 	//console.log(event.target);
+	keyDoUp(event.target.id);
 	event.target.className='key-button';
 }
 function buttonOnLeave(event){
@@ -114,9 +123,37 @@ function change(ch){
 	});	
 }
 var cps=0;
+function insertString(el, ins){
+	var res;
+	var st=el.value;
+	var ss=el.selectionStart;
+	var se=el.selectionEnd;
+
+	res=st.substring(0,ss)+ins+st.substring(se); 
+	el.value=res;
+	el.selectionStart=ss+1; el.selectionEnd=ss+1;
+	return res;	
+}
+function backSpaceString(el){
+	var res;
+	var st=el.value;
+	var ss=el.selectionStart;
+	var se=el.selectionEnd;
+	if (ss==se){
+		res=st.substring(0,ss-1)+st.substring(se); 
+		el.value=res;
+		el.selectionStart=ss-1; el.selectionEnd=ss-1;
+	} else {
+		res=st.substring(0,ss)+st.substring(se); 
+		el.value=res;
+		el.selectionStart=ss; el.selectionEnd=ss;	
+	}
+	return res;	
+}
 function keyDoUp(code){
+	let sls=el.selectionStart;
 	switch(code){
-		case 'Backspace': break;
+		case 'Backspace': backSpaceString(el); break;//el.value=el.value.substring(0,el.selectionStart-1)+el.value.substring(el.selectionStart); el.selectionStart=sls-1; el.selectionEnd=sls-1; break;
 		case 'ShiftLeft': change(chars_en_down); break;
 		case 'CapsLock': cps=(cps+1)%2; cps==0?change(chars_en_down):change(chars_en_up); break;
 		default:;
