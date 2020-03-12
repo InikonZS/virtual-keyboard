@@ -1,0 +1,82 @@
+.wrapper{
+	margin:auto;
+	min-height:400px;
+	max-width:1020px;
+	background-color:#ccccff;
+	font-family: sans-serif,arial;
+	font-size: 9pt;
+}
+.key-board{
+	border-style:dotted;
+	border-width:1px;
+	width:640px;
+}
+.output{
+	border-style:dotted;
+	border-width:1px;
+	margin-bottom:5px;
+	width:640px;
+	height:100px;
+	overflow-y:auto;
+}
+.key-row{
+	display:flex;
+	justify-content:space-between;
+	border-style:none;
+}
+.key-button{
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	cursor:default;
+	width:30px;
+	height:30px;
+	flex-basis:35px;
+	margin:3px;
+	overflow:hidden;
+	text-align:center;
+	border-style:solid;
+	border-radius:4px;
+	background-color:#aaaaaa;
+	border-width:1px;
+	border-color:#000000;
+}
+#Space{
+	flex-basis:270px;
+	flex-grow:1;
+}
+#ShiftLeft{
+	flex-basis:100px;
+	flex-grow:1;
+}
+#ShiftRight{
+	flex-basis:70px;
+	flex-grow:1;
+}
+#Capslock{
+	flex-basis:70px;
+	flex-grow:1;
+}
+#Tab{
+	flex-basis:50px;
+	flex-grow:1;
+}
+#Backspace{
+	flex-basis:70px;
+	flex-grow:1;
+}
+#Enter{
+	flex-basis:70px;
+	flex-grow:1;
+}
+#BackSlash{
+	flex-basis:50px;
+	flex-grow:1;
+}
+.key-button-active{
+	background-color:#5555ff;
+}
+
+.key-button:hover{
+	border-color:#dd4444;
+}
