@@ -13,11 +13,14 @@
 }
 .output{
 	border-style:dotted;
+	border-color:0;
 	border-width:1px;
 	margin-bottom:5px;
 	width:640px;
 	height:100px;
 	overflow-y:auto;
+	resize:none;
+	background-color:#ccccff;
 }
 .key-row{
 	display:flex;
