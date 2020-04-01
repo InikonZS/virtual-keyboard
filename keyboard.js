@@ -56,7 +56,7 @@ function clearSelection() {
   }
 
 function keyOnDown(event){
-	console.log(event);
+	//console.log(event);
 	
 	var targ=document.querySelector('#'+event.code);
 	if (targ.dt&&targ.dt.length==1) { //el.value+=''+targ.dt; 
@@ -70,19 +70,24 @@ function keyOnUp(event){
 	var targ=document.querySelector('#'+event.code);
 	if (targ) {targ.className='key-button';}
 	keyDoUp(event.code);
+	
 }
 
 function buttonOnDown(event){
+	//el.focus();
+	event.preventDefault();
 	//console.log(event.target);
 	//el.innerText+=event.target.dt;
 	if (event.target.dt.length==1) { //el.value+=''+event.target.dt; 
-	insertString(el,event.target.dt);} else {keyDoDown(event.target.id);}
+	insertString(el,event.target.dt);} else {keyDoDown(event.target.id, true);}
 	event.target.className='key-button key-button-active';
+	el.focus();
 	//return false;
 }
 function buttonOnUp(event){
 	//console.log(event.target);
-	keyDoUp(event.target.id);
+	//el.focus();
+	keyDoUp(event.target.id, true);
 	event.target.className='key-button';
 }
 function buttonOnLeave(event){
@@ -107,6 +112,22 @@ var chars_en_down='`1234567890-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./';
 var chars_en_up=  '`1234567890-=QWERTYUIOP[]\\ASDFGHJKL;\'ZXCVBNM,./';
 var chars_en_sh=  '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?';
 
+var chars_ru_down='`1234567890-=йцукенгшщзхъ\\фывапролджэячсмитьбю.';
+var chars_ru_up=  '`1234567890-=ЙЦУКЕНГШЩЗХЪ\\ФЫВАПРОЛДЖЭЯЧСМИТЬБЮ.';
+var chars_ru_sh=  '~!"№;%:?*()_+ЙЦУКЕНГШЩЗХЪ/ФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,';
+
+var lang = [{
+	down: chars_en_down,
+	up: chars_en_up,
+	sh: chars_en_sh
+},
+{
+	down: chars_ru_down,
+	up: chars_ru_up,
+	sh: chars_ru_sh
+}];
+
+
 //var chars_ru_down='`1234567890-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./';
 //var chars_en_up=  '`1234567890-=QWERTYUIOP[]\\ASDFGHJKL;\'ZXCVBNM,./';
 //var chars_en_sh=  '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?';
@@ -125,17 +146,30 @@ function change(ch){
 var cps=0;
 function insertString(el, ins){
 	var res;
+	el.focus();
 	var st=el.value;
 	var ss=el.selectionStart;
 	var se=el.selectionEnd;
 
 	res=st.substring(0,ss)+ins+st.substring(se); 
+	//el.selectionStart=ss+1; 
+	//el.selectionEnd=ss+1;
 	el.value=res;
-	el.selectionStart=ss+1; el.selectionEnd=ss+1;
+/*	console.log(el.value);
+	console.log(el.selectionStart);
+	console.log(el.selectionEnd);
+	console.log(ss);
+	console.log(ss);*/
+	el.selectionStart=ss+1; 
+	el.selectionEnd=ss+1;
+//	console.log(el.selectionStart);
+//	console.log(el.selectionEnd);
+	//?
 	return res;	
 }
 function backSpaceString(el){
 	var res;
+	el.focus(); // hack for Chrome
 	var st=el.value;
 	var ss=el.selectionStart;
 	var se=el.selectionEnd;
@@ -150,22 +184,71 @@ function backSpaceString(el){
 	}
 	return res;	
 }
-function keyDoUp(code){
+
+function moveCursor(el, sh){
+	el.focus(); // hack for Chrome
+
+	if (shiftState) {
+		if (el.selectionStart+sh>=0){
+			el.selectionStart+=sh;
+			el.selectionEnd=el.selectionStart;
+		}
+	} else {
+		if (el.selectionStart <= el.selectionEnd){
+			if (el.selectionEnd+sh>=0){
+				el.selectionEnd+=sh;
+			}
+		}
+	}
+//	el.blur();
+}
+
+var down='down';
+var up='up';
+var sh='sh';
+var cur=down;
+var currentLang=0;
+function change_(mode){
+	cur=mode;
+	if (mode=="down") {change(lang[currentLang].down); return;}
+	if (mode=="up") {change(lang[currentLang].up); return;}
+	if (mode=="sh") {change(lang[currentLang].sh); return;}
+}
+
+var shiftState=true;
+function keyDoUp(code, virtual){
 	let sls=el.selectionStart;
 	switch(code){
-		case 'Backspace': backSpaceString(el); break;//el.value=el.value.substring(0,el.selectionStart-1)+el.value.substring(el.selectionStart); el.selectionStart=sls-1; el.selectionEnd=sls-1; break;
-		case 'ShiftLeft': change(chars_en_down); break;
-		case 'CapsLock': cps=(cps+1)%2; cps==0?change(chars_en_down):change(chars_en_up); break;
-		default:;
-	}
-}
-function keyDoDown(code){
-	switch(code){
-		case 'Backspace': break;
-		case 'ShiftLeft': change(chars_en_sh); break;
+		//case 'Backspace': backSpaceString(el); break;//el.value=el.value.substring(0,el.selectionStart-1)+el.value.substring(el.selectionStart); el.selectionStart=sls-1; el.selectionEnd=sls-1; break;
+		case 'ShiftLeft': if (virtual) {
+			 shiftState==false?change_(down):change_(sh); 
+			 shiftState=!shiftState;
+		} else{
+			shiftState=true; change_(down)}; break;
 
+		case 'CapsLock': cps=(cps+1)%2; cps==0?change_(down):change_(up); break;
+		case 'App': currentLang=(currentLang+1)%2; change_(cur); break;
+		//case 'Enter': break;
+		//case 'Space': insertString(el, ' '); break;
+		//case 'Tab': insertString(el,'\t'); break;
+		//case 'ArrowLeft': moveCursor(el, -1); break;
+	//	case 'ArrowRight': moveCursor(el, 1); break;
 		default:;
 	}
+	el.focus();
+}
+function keyDoDown(code, virtual){
+	switch(code){
+		case 'Backspace': backSpaceString(el); break;
+		case 'ShiftLeft': if (!virtual) {shiftState=false;  change_(sh);} break;
+		case 'Enter': insertString(el, '\n'); break;
+		case 'Space': insertString(el, ' '); break;
+		case 'Tab': insertString(el,'\t'); break;
+		case 'ArrowLeft': moveCursor(el, -1); break;
+		case 'ArrowRight': moveCursor(el, 1); break;
+		default:;
+	}
+	el.focus();
 }
 rows.forEach((it, i)=>{
 	var row=makeRow(kbd,'row'+i);
