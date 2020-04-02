@@ -2,6 +2,7 @@ body{
 	padding:0px;
 	margin:0px;
 }
+
 .wrapper{
 	margin: auto;
     display: flex;
@@ -14,6 +15,7 @@ body{
     font-family: sans-serif, arial;
     font-size: 9pt;
 }
+
 .key-board{
 	border-style: solid;
     border-width: 1px;
@@ -25,6 +27,7 @@ body{
 	border-radius: 8px;
 	border-color: #00000080;
 }
+
 .output{
 	border-style: solid;
     border-color: 0;
@@ -44,14 +47,17 @@ body{
 	padding: 5px;
 	font-size: 9pt;
 }
+
 .output:focus{
 	outline-style:none;
 }
+
 .key-row{
 	display:flex;
 	justify-content:space-between;
 	border-style:none;
 }
+
 .key-button{
 	align-items: center;
 	justify-content: center;
@@ -76,6 +82,23 @@ body{
 	border-left-color: #888;
 
 }
+
+.key-button-active{
+	background-color:#5555ff;
+	transform: scale(0.85);
+	border-bottom-color: #888;
+	border-right-color: #888;
+	border-top-color: #000;
+	border-left-color: #000;
+
+}
+
+.key-button:hover{
+	border-color:#5555ff;
+	border-bottom-color: #22f;
+	border-right-color: #22f;
+}
+
 #Space{
 	flex-basis:270px;
 	flex-grow:1;
@@ -108,18 +131,4 @@ body{
 	flex-basis:50px;
 	flex-grow:1;
 }
-.key-button-active{
-	background-color:#5555ff;
-	transform: scale(0.85);
-	border-bottom-color: #888;
-	border-right-color: #888;
-	border-top-color: #000;
-	border-left-color: #000;
 
-}
-
-.key-button:hover{
-	border-color:#5555ff;
-	border-bottom-color: #22f;
-	border-right-color: #22f;
-}
