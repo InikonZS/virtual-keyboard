@@ -207,12 +207,26 @@ var down='down';
 var up='up';
 var sh='sh';
 var cur=down;
-var currentLang=0;
+
+
+
+function getCurrentLang(){
+	let langValue = localStorage.getItem('lang');
+	if ( langValue === null){
+		localStorage.setItem('lang', 0);
+		langValue = 0;
+	}
+	return langValue;
+}
+
+
+
 function change_(mode){
 	cur=mode;
 	if (mode=="down") {change(lang[currentLang].down); return;}
 	if (mode=="up") {change(lang[currentLang].up); return;}
 	if (mode=="sh") {change(lang[currentLang].sh); return;}
+	
 }
 
 var shiftState=true;
@@ -227,7 +241,7 @@ function keyDoUp(code, virtual){
 			shiftState=true; change_(down)}; break;
 
 		case 'CapsLock': cps=(cps+1)%2; cps==0?change_(down):change_(up); break;
-		case 'App': currentLang=(currentLang+1)%2; change_(cur); break;
+		case 'App': currentLang=(currentLang+1)%2; localStorage.setItem('lang', currentLang); change_(cur); break;
 		//case 'Enter': break;
 		//case 'Space': insertString(el, ' '); break;
 		//case 'Tab': insertString(el,'\t'); break;
@@ -256,7 +270,10 @@ rows.forEach((it, i)=>{
 		makeButton(row,jt,chars[i].split(' ')[j]);
 	});
 });
+var currentLang = +getCurrentLang();
 change(chars_en_down);
+change_(cur);
+
 
 
 
