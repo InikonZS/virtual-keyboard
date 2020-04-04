@@ -21,6 +21,24 @@ function keyOnUp(event){
 	keyDoUp(event.code, false, keyboard);
 }
 
+function stateButtonProc(event){
+	if (event.target.dt == 'Alt') {
+		altState ? 
+		event.target.className='key-button' :
+		event.target.className='key-button key-button-active';
+	}
+	if (event.target.dt == 'Shift') {
+		shiftState ? 
+		event.target.className='key-button' :
+		event.target.className='key-button key-button-active';
+	}
+	if (event.target.dt == 'Ctrl') {
+		controlState ? 
+		event.target.className='key-button' :
+		event.target.className='key-button key-button-active';
+	}
+}
+
 function buttonOnDown(event){
 	//el.focus();
 	event.preventDefault();
@@ -29,13 +47,9 @@ function buttonOnDown(event){
 	} else {
 		keyDoDown(event.target.id, true, keyboard);
 	}
+	stateButtonProc(event);
 	event.target.className='key-button key-button-active';
-	console.log(altState);
-	if (event.target.dt == 'Alt') {
-		altState ? 
-		event.target.className='key-button' :
-		event.target.className='key-button key-button-active';
-	}
+	
 	el.focus();
 	//return false;
 }
@@ -43,21 +57,12 @@ function buttonOnUp(event){
 	//el.focus();
 	keyDoUp(event.target.id, true, keyboard);
 	event.target.className='key-button';
-	console.log(altState);
-	if (event.target.dt == 'Alt') {
-		altState ? 
-		event.target.className='key-button' :
-		event.target.className='key-button key-button-active';
-	}
+	stateButtonProc(event)
 }
 
 function buttonOnLeave(event){
 	event.target.className='key-button';
-	if (event.target.dt == 'Alt') {
-		altState ? 
-		event.target.className='key-button' :
-		event.target.className='key-button key-button-active';
-	}
+	stateButtonProc(event);
 	//return false;
 }
 
@@ -82,6 +87,14 @@ function keyDoUp(code, virtual, keyboard){
 			break;
 
 		case 'AltLeft':
+				if (!shiftState){
+					currentLang = (currentLang+1) % 2;
+					localStorage.setItem('lang', currentLang); 
+					change_(cur, keyboard); 
+					altState = true;
+					if (virtual) {break;}
+				}
+
 				if (virtual) {
 					altState = !altState;  
 				} else {
@@ -89,6 +102,14 @@ function keyDoUp(code, virtual, keyboard){
 				}
 				break;
 
+		case 'ControlLeft':
+				if (virtual) {
+					controlState = !controlState;  
+				} else {
+					controlState = true;
+				}
+				break;
+		
 		case 'CapsLock': 
 			capsLockState = (capsLockState+1) % 2; 
 			(capsLockState == 0) ? change_(down, keyboard) : change_(up, keyboard); 
@@ -118,6 +139,11 @@ function keyDoDown(code, virtual, keyboard){
 				altState=false;  
 			} 
 			break;
+		case 'ControlLeft':
+			if (!virtual) {
+				controlState=false;  
+			} 
+			break;
 		case 'Enter': insertString(el, '\n'); break;
 		case 'Space': insertString(el, ' '); break;
 		case 'Tab': insertString(el, '\t'); break;
@@ -142,6 +168,7 @@ function getCurrentLang(){
 
 var shiftState = true;
 var altState = true;
+var controlState = true;
 var capsLockState = 0;
 var currentLang = +getCurrentLang();
 
@@ -150,6 +177,8 @@ var el = makeElement (mainWindow, 'textarea', 'output');
 el.onkeydown = () => false;
 
 var keyboard = makeKeyboard(mainWindow);
+var hint = makeElement(mainWindow, 'div', 'hint');
+hint.textContent = `Use left Alt + Shift or left Shift + Alt or virtual App button for change language.`;
 
 document.addEventListener('keydown',keyOnDown);
 document.addEventListener('keyup',keyOnUp);

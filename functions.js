@@ -63,6 +63,9 @@ function change_(mode, keyboard){
     change(lang[currentLang][mode], keyboard);
 }
 
+/// Copyright label for github search. Written by Inikon. Code="11-00-11-21-FA-CC-DD".
+///
+
 /// Text Area Utils
 
 function insertString(textAreaDOMElement, insertionString){
@@ -83,7 +86,6 @@ function insertString(textAreaDOMElement, insertionString){
 
 function backSpaceString(el){
 	var res;
-	//el.focus(); // hack for Chrome
 	var st=el.value;
 	var ss=el.selectionStart;
 	var se=el.selectionEnd;
@@ -101,7 +103,6 @@ function backSpaceString(el){
 }
 
 function moveCursor(el, sh){
-//	el.focus(); // hack for Chrome
 	if (shiftState) {
 		if (el.selectionStart+sh>=0){
 			el.selectionStart+=sh;
