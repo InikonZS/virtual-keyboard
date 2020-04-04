@@ -49,12 +49,6 @@ function buttonOnDown(event){
 	}
 	stateButtonProc(event);
 	event.target.className='key-button key-button-active';
-	//console.log(altState);
-	/*if (event.target.dt == 'Alt') {
-		altState ? 
-		event.target.className='key-button' :
-		event.target.className='key-button key-button-active';
-	}*/
 	
 	el.focus();
 	//return false;
